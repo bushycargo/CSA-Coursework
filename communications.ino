@@ -23,6 +23,7 @@ char rx_buffer[7];
 int rx_index;
 char txButton, txTilt, txPot, txA, txB, txC, txD;
 char rxButton, rxTilt, rxPot, rxA, rxB, rxC, rxD;
+const int buttonPin = 2;
 
 const long rxInterval = 20;              // interval at which to read bit (milliseconds)
 int rx_state = 0;
@@ -31,7 +32,14 @@ unsigned long previousRxMillis = 0;        // will store last time LED was updat
 int rx_bits[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 void readInputs(){
-    char button_pin, tilt_pin, pot_pin, b_pin, c_pin, d_pin;
+    int buttonState = digitalRead(buttonPin);
+    if (buttonState == HIGH)
+    {
+      tx_buffer[0] = 1;
+    }
+    else{
+      tx_buffer[0] = 0;
+    }
     
 
 }
@@ -71,6 +79,7 @@ void setup()
 {
   // set the digital pin as output:
   pinMode(3, OUTPUT);
+  pinMode(buttonPin, INPUT)
   // initialize serial communication at 9600 bits per second:
   Serial.begin(9600);
 }
