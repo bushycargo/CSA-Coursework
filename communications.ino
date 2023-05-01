@@ -8,12 +8,11 @@
 
 int ledState = LOW;             // ledState used to set the LED
 
-
 char encrypt(char in_char)
 {
   char out_char;
   
-  out_char = in_char;
+  out_char = XOREncryptDecrypt(in_char);
   
   return out_char;
 }
@@ -23,12 +22,17 @@ char decrypt(char in_char)
 {
   char out_char;
   
-  out_char = in_char;
+  out_char = XOREncryptDecrypt(in_char);
   
   return out_char;
 }
 
-
+char XOREncryptDecrypt(char in_char)
+{
+    char xorKey = 'a';
+    char out = in_char ^ xorKey;
+    return out;
+}
 
 // the setup routine runs once when you press reset:
 void setup()
@@ -42,7 +46,6 @@ void setup()
 
 const long txInterval = 200;              // interval at which to tx bit (milliseconds)
 int tx_state = 0;
-char tx_char = 'H';
 char chr;
 unsigned long previousTxMillis = 0;        // will store last time LED was updated
 
