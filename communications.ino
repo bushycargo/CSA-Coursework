@@ -30,6 +30,16 @@ char rx_char;
 unsigned long previousRxMillis = 0;        // will store last time LED was updated
 int rx_bits[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
+void readInputs(){
+    char button_pin, tilt_pin, pot_pin, b_pin, c_pin, d_pin;
+    
+
+}
+
+void setOutputs(){
+    
+
+}
 
 char encrypt(char in_char)
 {
@@ -237,6 +247,8 @@ void rxChar()
 // the loop routine runs over and over again forever:
 void loop()
 {
-  txChar();
-  rxChar();
+    readInputs();
+    txChar();
+    rxChar();
+    setOutputs();
 }
