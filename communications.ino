@@ -8,6 +8,29 @@
 
 int ledState = LOW;             // ledState used to set the LED
 
+#define STX 0x70
+#define ETX 0x71
+#define TX_START_OF_TEXT  -1
+
+int tx_buffer_state = TX_START_OF_TEXT;
+const long txInterval = 200;              // interval at which to tx bit (milliseconds)
+int tx_state = 0;
+char chr;
+unsigned long previousTxMillis = 0;        // will store last time LED was updated
+
+char tx_buffer[8] = {0,0,0,0,0,0,0,ETX};
+char rx_buffer[7];
+int rx_index;
+char txButton, txTilt, txPot, txA, txB, txC, txD;
+char rxButton, rxTilt, rxPot, rxA, rxB, rxC, rxD;
+
+const long rxInterval = 20;              // interval at which to read bit (milliseconds)
+int rx_state = 0;
+char rx_char;
+unsigned long previousRxMillis = 0;        // will store last time LED was updated
+int rx_bits[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+
 char encrypt(char in_char)
 {
   char out_char;
@@ -16,7 +39,6 @@ char encrypt(char in_char)
   
   return out_char;
 }
-
 
 char decrypt(char in_char)
 {
@@ -43,36 +65,30 @@ void setup()
   Serial.begin(9600);
 }
 
-
-const long txInterval = 200;              // interval at which to tx bit (milliseconds)
-int tx_state = 0;
-char chr;
-unsigned long previousTxMillis = 0;        // will store last time LED was updated
-
-char tx_string[] = "Hello World";
-#define TX_START_OF_TEXT  -1
-int tx_string_state = TX_START_OF_TEXT;
-
-#define STX 0x02
-#define ETX 0x03
-
 char getTxChar()
 {
   char chr;
   
-  switch (tx_string_state)
+  switch (tx_buffer_state)
   {
     case TX_START_OF_TEXT:
-    tx_string_state = 0;
+    tx_buffer_state = 0;
+    tx_buffer[0] = txButton;
+    tx_buffer[1] = txTilt;
+    tx_buffer[2] = txPot;
+    tx_buffer[3] = txA;
+    tx_buffer[4] = txB;
+    tx_buffer[5] = txC;
+    tx_buffer[6] = txD;
     return STX;
     break;
     
     default:
-    chr = tx_string[tx_string_state];
-    tx_string_state++;
-    if (chr == '\0')  /* End of string? */
+    chr = tx_buffer[tx_buffer_state];
+    tx_buffer_state++;
+    if (chr == ETX)  /* End of string? */
     {
-      tx_string_state = TX_START_OF_TEXT;  /* Update the tx string state to start sending the string again */
+      tx_buffer_state = TX_START_OF_TEXT;  /* Update the tx string state to start sending the string again */
       return ETX;  /* Send End of Text character */
     }
     else
@@ -133,15 +149,6 @@ void txChar()
   }
 }
 
-
-
-const long rxInterval = 20;              // interval at which to read bit (milliseconds)
-int rx_state = 0;
-char rx_char;
-unsigned long previousRxMillis = 0;        // will store last time LED was updated
-int rx_bits[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-
-
 void rxChar()
 {
   unsigned long currentRxMillis = millis();
@@ -177,13 +184,27 @@ void rxChar()
             if (rx_bits[i] >= 6) rx_char = rx_char | 0x01;
           }
           rx_char = decrypt(rx_char);
-          if (rx_char >= 0x20)
+          switch (rx_char)
           {
-            Serial.println(rx_char);
-          }
-          else
-          {
-            Serial.println(' ');
+            case STX:
+            rx_index = 0;
+            break;
+            
+            case ETX:
+            rxButton = rx_buffer[0];
+            rxTilt = rx_buffer[1];
+            rxPot = rx_buffer[2];
+            rxA = rx_buffer[3];
+            rxB = rx_buffer[4];
+            rxC = rx_buffer[5];
+            rxD = rx_buffer[6];
+            rx_index = 0;
+            break;
+            
+            default:
+            rx_buffer[rx_index] = rx_char;
+            rx_index++;
+            break;
           }
         }
         else
@@ -212,8 +233,6 @@ void rxChar()
   }
 
 }
-
-
 
 // the loop routine runs over and over again forever:
 void loop()
