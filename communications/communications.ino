@@ -50,7 +50,8 @@ void writeOutputs()
 {
   // Writes the outputs in the mini-projects
   // Uses rxButton, rxTilt, rxPot, rxA, rxB, rxC, rxD;
-  
+  SDDclearDisplay();
+
   if (rxButton == 1){
     tone(13, 1000);
   }
@@ -125,6 +126,15 @@ void SDDclearDisplay(){
   digitalWrite(rightBottom, LOW);
 }
 
+void SDDdisplayZero(){
+  digitalWrite(leftBottom, HIGH);
+  digitalWrite(leftTop, HIGH);
+  digitalWrite(top, HIGH);
+  digitalWrite(rightBottom, HIGH);
+  digitalWrite(rightTop, HIGH);
+  digitalWrite(bottom, HIGH);
+}
+
 void SDDdisplayOne(){
   digitalWrite(leftBottom, HIGH);
   digitalWrite(leftTop, HIGH);
@@ -154,7 +164,44 @@ void SDDdisplayFour(){
 }
 
 void SDDdisplayFive(){
-  
+  digitalWrite(top, HIGH);
+  digitalWrite(leftTop, HIGH);
+  digitalWrite(centre, HIGH);
+  digitalWrite(rightBottom, HIGH);
+  digitalWrite(bottom, HIGH);
+}
+
+void SDDdisplaySix(){
+  digitalWrite(top, HIGH);
+  digitalWrite(leftTop, HIGH);
+  digitalWrite(leftBottom, HIGH);
+  digitalWrite(centre, HIGH);
+  digitalWrite(rightBottom, HIGH);
+  digitalWrite(bottom, HIGH);
+}
+
+void SDDdisplaySeven(){
+  digitalWrite(top, HIGH);
+  digitalWrite(leftBottom, HIGH);
+  digitalWrite(leftTop, HIGH);
+}
+
+void SDDdisplayEight(){
+  digitalWrite(rightBottom, HIGH);
+  digitalWrite(bottom, HIGH);
+  digitalWrite(leftBottom, HIGH);
+  digitalWrite(leftTop, HIGH);
+  digitalWrite(centre, HIGH);
+  digitalWrite(rightTop, HIGH);
+  digitalWrite(rightBottom, HIGH);
+}
+
+void SDDdisplayNine(){
+  digitalWrite(top, HIGH);
+  digitalWrite(leftTop, HIGH);
+  digitalWrite(centre, HIGH);
+  digitalWrite(rightBottom, HIGH);
+  digitalWrite(rightTop, HIGH);
 }
 
 const long txInterval = 200;              // interval at which to tx bit (milliseconds)
