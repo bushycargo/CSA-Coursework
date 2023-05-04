@@ -33,7 +33,7 @@ void writeOutputs()
   // Uses rxButton, rxTilt, rxPot, rxA, rxB, rxC, rxD;
   
   if (rxButton == 1){
-    digitalWrite(4, HIGH);
+    tone(13, 1000)
   }
 }
 
@@ -81,6 +81,7 @@ void setup()
   pinMode(11, OUTPUT); //rightTop
   pinMode(12, OUTPUT); //top 
 
+  pinMode(13, OUTPUT); // Buzzer
   // initialize serial communication at 9600 bits per second:
   Serial.begin(9600);
 }
