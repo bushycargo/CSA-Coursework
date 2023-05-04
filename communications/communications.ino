@@ -58,6 +58,49 @@ void writeOutputs()
   if (rxTilt == 1){
     digitalWrite(4, HIGH);
   }
+
+  switch (rxPot)
+  {
+  case 1:
+    SDDdisplayOne();
+    break;
+
+  case 2:
+    SDDdisplayTwo();
+    break;
+
+  case 3:
+    SDDdisplayThree();
+    break;
+
+  case 4:
+    SDDdisplayFour();
+    break;
+
+  case 5:
+    SDDdisplayFive();
+    break;
+
+  case 6:
+    SDDdisplaySix();
+    break;
+
+  case 7:
+    SDDdisplaySeven();
+    break;
+
+  case 8:
+    SDDdisplayEight();
+    break;
+
+  case 9:
+    SDDdisplayNine();
+    break;
+
+  default:
+    SDDdisplayZero();
+    break;
+  }
 }
 
 
