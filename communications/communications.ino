@@ -20,7 +20,7 @@ void readInputs()
   // Uses txButton, txTilt, txPot, txA, txB, txC, txD;
   int buttonState = digitalRead(2);
   int potValue = analogRead(A1);
-  Serial.println(potValue);
+  // Serial.println(potValue);
   if (buttonState == 1){
     txButton = 1;
   }
@@ -67,13 +67,48 @@ char decrypt(char in_char)
 void setup()
 {
   // set the digital pin as output:
-  pinMode(3, OUTPUT);
-  pinMode(2, INPUT);
-  pinMode(4, OUTPUT);
+  pinMode(3, OUTPUT); //TRANSMIT LED OUT
+  pinMode(2, INPUT); //BUTTON IN
+  pinMode(4, OUTPUT); //LED OUT
+
+  pinMode(5, OUTPUT); // rightBottom
+  pinMode(6, OUTPUT); // decimalPlace
+  pinMode(7, OUTPUT); // bottom
+  pinMode(8, OUTPUT); // leftBottom
+
+  pinMode(9, OUTPUT); // leftTop
+  pinMode(10, OUTPUT); // centre
+  pinMode(11, OUTPUT); //rightTop
+  pinMode(12, OUTPUT); //top 
+
   // initialize serial communication at 9600 bits per second:
   Serial.begin(9600);
 }
 
+void SDDclearDisplay(){
+  digitalWrite(5, LOW);
+  digitalWrite(6, LOW);
+  digitalWrite(7, LOW);
+  digitalWrite(8, LOW);
+
+  digitalWrite(9, LOW);
+  digitalWrite(10, LOW);
+  digitalWrite(11, LOW);
+  digitalWrite(12, LOW);
+}
+
+void SDDdisplayOne(){
+  digitalWrite(9, HIGH);
+  digitalWrite(8, LOW);
+}
+
+void SDDdisplayTwo(){
+  digitalWrite(12, HIGH);
+  digitalWrite(11, HIGH);
+  digitalWrite(10, HIGH);
+  digitalWrite(8, HIGH);
+  digitalWrite(7, HIGH);
+}
 
 const long txInterval = 200;              // interval at which to tx bit (milliseconds)
 int tx_state = 0;
