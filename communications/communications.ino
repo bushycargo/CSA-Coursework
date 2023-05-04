@@ -13,6 +13,7 @@ char txBuffer[8] = {0,0,0,0,0,0,0,ETX};
 char rxBuffer[7];
 char rxButton, rxTilt, rxPot, rxA, rxB, rxC, rxD;
 int  rx_index;
+int rightBottom, decimalPlace, bottom, leftBottom, leftTop, centre, rightTop, top;
 
 void readInputs()
 {
@@ -20,9 +21,27 @@ void readInputs()
   // Uses txButton, txTilt, txPot, txA, txB, txC, txD;
   int buttonState = digitalRead(2);
   int potValue = analogRead(A1);
-  // Serial.println(potValue);
-  if (buttonState == 1){
+  int tiltState = digitalRead(1);
+
+  //Due to it being a 1 digit display get the first digit and use that assuming all digits in 100s
+  if (potValue > 999) // if the potValue is 1000 or higher assume it is 999
+  {
+    txPot = 9;
+  }
+  else{
+    while (potValue >= 10) //Gets just the first digit of potValue
+    {
+      potValue /= 10;
+    } 
+    txPot = potValue;
+  }
+  
+
+  if (buttonState == HIGH){
     txButton = 1;
+  }
+  if(tiltState == HIGH){
+    txTilt = 1;
   }
   
 }
@@ -33,7 +52,10 @@ void writeOutputs()
   // Uses rxButton, rxTilt, rxPot, rxA, rxB, rxC, rxD;
   
   if (rxButton == 1){
-    tone(13, 1000)
+    tone(13, 1000);
+  }
+  if (rxTilt == 1){
+    digitalWrite(4, HIGH);
   }
 }
 
@@ -70,45 +92,69 @@ void setup()
   pinMode(3, OUTPUT); //TRANSMIT LED OUT
   pinMode(2, INPUT); //BUTTON IN
   pinMode(4, OUTPUT); //LED OUT
-
-  pinMode(5, OUTPUT); // rightBottom
-  pinMode(6, OUTPUT); // decimalPlace
-  pinMode(7, OUTPUT); // bottom
-  pinMode(8, OUTPUT); // leftBottom
-
-  pinMode(9, OUTPUT); // leftTop
-  pinMode(10, OUTPUT); // centre
-  pinMode(11, OUTPUT); //rightTop
-  pinMode(12, OUTPUT); //top 
-
+  pinMode(1, INPUT); // Tilt Switch
   pinMode(13, OUTPUT); // Buzzer
+
+  rightBottom = 5;
+  decimalPlace = 6;
+  bottom = 7;
+  leftBottom = 8;
+  leftTop = 9;
+  centre = 10;
+  rightTop = 11;
+  top = 12;
+
+  for (int i = 5; i < 13; i++) //sets pinMode to output for pins 5-12
+  {
+    pinMode(i, OUTPUT);
+  }
+  
   // initialize serial communication at 9600 bits per second:
   Serial.begin(9600);
 }
 
 void SDDclearDisplay(){
-  digitalWrite(5, LOW);
-  digitalWrite(6, LOW);
-  digitalWrite(7, LOW);
-  digitalWrite(8, LOW);
+  digitalWrite(rightBottom, LOW);
+  digitalWrite(decimalPlace, LOW);
+  digitalWrite(bottom, LOW);
+  digitalWrite(leftBottom, LOW);
 
-  digitalWrite(9, LOW);
-  digitalWrite(10, LOW);
-  digitalWrite(11, LOW);
-  digitalWrite(12, LOW);
+  digitalWrite(leftTop, LOW);
+  digitalWrite(centre, LOW);
+  digitalWrite(rightTop, LOW);
+  digitalWrite(rightBottom, LOW);
 }
 
 void SDDdisplayOne(){
-  digitalWrite(9, HIGH);
-  digitalWrite(8, LOW);
+  digitalWrite(leftBottom, HIGH);
+  digitalWrite(leftTop, HIGH);
 }
 
 void SDDdisplayTwo(){
-  digitalWrite(12, HIGH);
-  digitalWrite(11, HIGH);
-  digitalWrite(10, HIGH);
-  digitalWrite(8, HIGH);
-  digitalWrite(7, HIGH);
+  digitalWrite(top, HIGH);
+  digitalWrite(rightTop, HIGH);
+  digitalWrite(centre, HIGH);
+  digitalWrite(leftBottom, HIGH);
+  digitalWrite(bottom, HIGH);
+}
+
+void SDDdisplayThree(){
+  digitalWrite(top, HIGH);
+  digitalWrite(centre, HIGH);
+  digitalWrite(bottom, HIGH);
+  digitalWrite(rightBottom, HIGH);
+  digitalWrite(rightTop, HIGH);
+}
+
+void SDDdisplayFour(){
+  digitalWrite(leftTop, HIGH);
+  digitalWrite(rightTop, HIGH);
+  digitalWrite(rightBottom, HIGH);
+  digitalWrite(centre, HIGH);
+}
+
+void SDDdisplayFive(){
+  
 }
 
 const long txInterval = 200;              // interval at which to tx bit (milliseconds)
