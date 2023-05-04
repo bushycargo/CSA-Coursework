@@ -22,7 +22,8 @@ char tx_buffer[8] = {0,0,0,0,0,0,0,ETX};
 char rx_buffer[7];
 int rx_index;
 char txButton, txTilt, txPot, txA, txB, txC, txD;
-char rxButton, rxTilt, rxPot, rxA, rxB, rxC, rxD;
+char rxTilt, rxPot, rxA, rxB, rxC, rxD;
+char rxButton = 0;
 const int buttonPin = 2;
 
 const long rxInterval = 20;              // interval at which to read bit (milliseconds)
@@ -35,18 +36,21 @@ void readInputs(){
     int buttonState = digitalRead(buttonPin);
     if (buttonState == HIGH)
     {
-      tx_buffer[0] = 1;
+      txButton = 1;
+      //Serial.println("Button Press");
     }
-    else{
-      tx_buffer[0] = 0;
-    }
-    
 
+    
+  
 }
 
 void setOutputs(){
-    
-
+  if (rxButton == 1)
+  {
+    digitalWrite(4, HIGH);
+  }
+  Serial.print(rxButton);
+  
 }
 
 char encrypt(char in_char)
@@ -79,7 +83,8 @@ void setup()
 {
   // set the digital pin as output:
   pinMode(3, OUTPUT);
-  pinMode(buttonPin, INPUT)
+  pinMode(buttonPin, INPUT);
+  pinMode(4, OUTPUT);
   // initialize serial communication at 9600 bits per second:
   Serial.begin(9600);
 }
@@ -91,6 +96,7 @@ char getTxChar()
   switch (tx_buffer_state)
   {
     case TX_START_OF_TEXT:
+    //Serial.println("Button: " + txButton);
     tx_buffer_state = 0;
     tx_buffer[0] = txButton;
     tx_buffer[1] = txTilt;
@@ -181,7 +187,7 @@ void rxChar()
 
     sensorValue = analogRead(A0);
     //Serial.println(rx_state);
-
+    
     switch (rx_state)
     {
       case 0:
@@ -207,10 +213,12 @@ void rxChar()
           {
             case STX:
             rx_index = 0;
+            Serial.println("New Transmission");
             break;
             
             case ETX:
             rxButton = rx_buffer[0];
+            //Serial.println("rxButton: " + rxButton);
             rxTilt = rx_buffer[1];
             rxPot = rx_buffer[2];
             rxA = rx_buffer[3];
@@ -230,10 +238,10 @@ void rxChar()
         {
           Serial.println("Rx error");
         }
-//        for (i = 0; i < 10; i++)  /* Print the recieved bit on the monitor - debug purposes */
-//        {
-//          Serial.println(rx_bits[i]);
-//        }
+      //  for (i = 0; i < 10; i++)  /* Print the recieved bit on the monitor - debug purposes */
+      //  {
+      //    Serial.println(rx_bits[i]);
+      //  }
         for (i = 0; i < 10; i++)
         {
           rx_bits[i] = 0;
