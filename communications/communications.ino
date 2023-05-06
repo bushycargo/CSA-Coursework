@@ -22,7 +22,11 @@ void readInputs()
   int buttonState = digitalRead(2);
   int potValue = analogRead(A1);
   int tiltState = digitalRead(1);
+  int xAxis = getAxis(A3);
+  int yAxis = getAxis(A5);
 
+  txA = xAxis;
+  txB = yAxis;
   //Due to it being a 1 digit display get the first digit and use that assuming all digits in 100s
   if (potValue > 999) // if the potValue is 1000 or higher assume it is 999
   {
@@ -58,6 +62,14 @@ void writeOutputs()
   if (rxTilt == 1){
     digitalWrite(4, HIGH);
   }
+
+  if (rxA > rxB)
+  {
+    analogWrite(16, txA * 17);
+  }else{
+    analogWrite(16, txB * 17);
+  }
+  
 
   switch (rxPot)
   {
@@ -103,7 +115,22 @@ void writeOutputs()
   }
 }
 
+int getAxis(int axis){
+  int range = 15;
+  int state = analogRead(axis);
+  int threshold = range / 4;
+  int center = range / 2;
 
+  state = map(state, 0, 1023, 0, range);
+  int dist = state = center;
+  
+  if (abs(dist) < threshold)
+  {
+    dist = 0;
+  }
+  
+  return dist;
+}
 
 int ledState = LOW;             // ledState used to set the LED
 
@@ -138,6 +165,7 @@ void setup()
   pinMode(4, OUTPUT); //LED OUT
   pinMode(1, INPUT); // Tilt Switch
   pinMode(13, OUTPUT); // Buzzer
+  pinMode(16, OUTPUT); // Motor
 
   rightBottom = 5;
   decimalPlace = 6;
@@ -225,8 +253,8 @@ void SDDdisplaySix(){
 
 void SDDdisplaySeven(){
   digitalWrite(top, HIGH);
-  digitalWrite(leftBottom, HIGH);
-  digitalWrite(leftTop, HIGH);
+  digitalWrite(rightBottom, HIGH);
+  digitalWrite(rightTop, HIGH);
 }
 
 void SDDdisplayEight(){
