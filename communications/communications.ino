@@ -73,13 +73,16 @@ void writeOutputs()
   // Uses rxButton, rxTilt, rxPot, rxA, rxB, rxC, rxD;
   SDDclearDisplay();
   int distance = rxA;
-  if (rxA < 5)
+  if (rxA != 0)
   {
-    digitalWrite(16, HIGH);
-  }
-  else
-  {
-    digitalWrite(16, LOW);
+    if (rxA < 5)
+    {
+      digitalWrite(16, HIGH);
+    }
+    else
+    {
+      digitalWrite(16, LOW);
+    }
   }
   
   if (rxButton == 1)
