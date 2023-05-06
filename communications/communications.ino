@@ -16,7 +16,8 @@ int rx_index;
 int rightBottom, decimalPlace, bottom, leftBottom, leftTop, centre, rightTop, top;
 int trigPin = 17;
 int echoPin = 18;
-
+const long trigDuration = 10; // trig duration in micros
+unsigned long prevTrigMicros = 0;
     
 void readInputs()
 {
@@ -25,12 +26,19 @@ void readInputs()
   int buttonState = digitalRead(2);
   int potValue = analogRead(A1);
   int tiltState = digitalRead(1);
+  int duration = 0;
 
-  digitalWrite(trigPin, LOW);
+  unsigned long currentTrigMicros = micros();
+  
   digitalWrite(trigPin, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin, LOW);
-  int duration = pulseIn(echoPin, HIGH);
+  if (currentTrigMicros - prevTrigMicros >= trigDuration)
+  {
+    prevTrigMicros += trigDuration;
+
+    digitalWrite(trigPin, LOW);
+    duration = pulseIn(echoPin, HIGH);
+  }
+  
   int distance = (duration*0.0343)/2;
 
   txA = distance;
@@ -159,6 +167,8 @@ void setup()
   pinMode(16, OUTPUT);        // Motor
   pinMode(trigPin, OUTPUT);    // TRIG
   pinMode(echoPin, INPUT); // ECHO
+
+  digitalWrite(trigPin, LOW);
 
   rightBottom = 5;
   decimalPlace = 6;
