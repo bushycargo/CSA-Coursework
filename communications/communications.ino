@@ -18,7 +18,8 @@ int trigPin = 17;
 int echoPin = 18;
 const long trigDuration = 10; // trig duration in micros
 unsigned long prevTrigMicros = 0;
-    
+int duration = 0;
+
 void readInputs()
 {
   // Reads the inputs in the mini-projects
@@ -26,8 +27,7 @@ void readInputs()
   int buttonState = digitalRead(2);
   int potValue = analogRead(A1);
   int tiltState = digitalRead(1);
-  int duration = 0;
-
+  
   unsigned long currentTrigMicros = micros();
   
   digitalWrite(trigPin, HIGH);
